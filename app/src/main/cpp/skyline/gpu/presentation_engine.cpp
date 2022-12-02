@@ -344,8 +344,10 @@ namespace skyline::gpu {
 
     void PresentationEngine::OnDisableFrameThrottlingChanged(const bool &value) {
         std::scoped_lock guard{mutex};
+
         vkSwapchain.reset();
-        if (jSurface && swapchainExtent && swapchainFormat)
+
+        if (vkSurface && swapchainExtent && swapchainFormat)
             UpdateSwapchain(swapchainFormat, swapchainExtent);
     }
 
