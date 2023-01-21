@@ -115,8 +115,8 @@ namespace skyline::service::am {
         i32 height{request.Pop<i32>()};
         u64 transferMemorySize{request.Pop<u64>()};
 
-        constexpr i32 MaximumFbWidth{320};
-        constexpr i32 MaximumFbHeight{240};
+        constexpr i32 MaximumFbWidth{192};
+        constexpr i32 MaximumFbHeight{144};
         constexpr u64 RequiredFbAlignment{0x40000};
 
         if (width > MaximumFbWidth || height > MaximumFbHeight || !util::IsAligned(transferMemorySize, RequiredFbAlignment))
