@@ -62,13 +62,13 @@ namespace skyline::service::am {
 
     Result ICommonStateGetter::GetDefaultDisplayResolution(type::KSession &session, ipc::IpcRequest &request, ipc::IpcResponse &response) {
         if (operationMode == OperationMode::Handheld) {
-            constexpr u16 HandheldResolutionW{320};
-            constexpr u16 HandheldResolutionH{240};
+            constexpr u16 HandheldResolutionW{192};
+            constexpr u16 HandheldResolutionH{144};
             response.Push<u32>(HandheldResolutionW);
             response.Push<u32>(HandheldResolutionH);
         } else if (operationMode == OperationMode::Docked) {
-            constexpr u16 DockedResolutionW{320};
-            constexpr u16 DockedResolutionH{240};
+            constexpr u16 DockedResolutionW{192};
+            constexpr u16 DockedResolutionH{144};
             response.Push<u32>(DockedResolutionW);
             response.Push<u32>(DockedResolutionH);
         }
