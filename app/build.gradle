@@ -21,7 +21,7 @@ android {
     compileSdkVersion 33
     buildToolsVersion '33.0.0'
     defaultConfig {
-        applicationId "skyline.purple"
+        applicationId "skyline.purple.dev"
 
         minSdkVersion 29
         targetSdkVersion 33
@@ -101,7 +101,7 @@ android {
     productFlavors {
         full {
             dimension = "version"
-            manifestPlaceholders += [appLabel: "Skyline"]
+            manifestPlaceholders += [appLabel: "Skyline Dev"]
         }
 
         dev {
