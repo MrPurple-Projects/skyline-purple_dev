@@ -43,6 +43,7 @@ import emu.skyline.utils.GpuDriverHelper
 import emu.skyline.utils.PreferenceSettings
 import emu.skyline.utils.WindowInsetsHelper
 import javax.inject.Inject
+import emu.skyline.utils.GameDataHandler
 import kotlin.math.ceil
 
 @AndroidEntryPoint
@@ -86,8 +87,8 @@ class MainActivity : AppCompatActivity() {
     private val documentPicker = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
         it?.let { uri ->
             contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            preferenceSettings.searchLocation = uri.toString()
-
+            //preferenceSettings.searchLocation = uri.toString()
+            GameDataHandler().setGamesLocation(applicationContext, uri.toString())
             loadRoms(false)
         }
     }
@@ -246,7 +247,12 @@ class MainActivity : AppCompatActivity() {
         binding.appList.layoutManager = CustomLayoutManager(gridSpan)
         setAppListDecoration()
 
-        if (preferenceSettings.searchLocation.isEmpty()) documentPicker.launch(null)
+        var gameDataHandler = GameDataHandler()
+        var gameData = gameDataHandler.getGamesLocations(applicationContext);
+
+        if (gameData.isEmpty()) documentPicker.launch(null)
+
+        //if (preferenceSettings.searchLocation.isEmpty()) documentPicker.launch(null)
     }
 
     private fun getDataItems() = mutableListOf<DataItem>().apply {
@@ -327,7 +333,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadRoms(loadFromFile : Boolean) {
-        viewModel.loadRoms(this, loadFromFile, Uri.parse(preferenceSettings.searchLocation), preferenceSettings.systemLanguage)
+        var gameDataHandler = GameDataHandler()
+        var gameData = gameDataHandler.getGamesLocations(applicationContext)
+        viewModel.loadRoms(this, loadFromFile, gameData, preferenceSettings.systemLanguage)
         preferenceSettings.refreshRequired = false
     }
 

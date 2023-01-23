@@ -138,6 +138,50 @@ class GameDataHandler() {
         settings?.commit()
     }
 
+    fun getGamesLocations(context : Context?) : List<String> {
+        var locationsArray = mutableListOf<String>()
+        var locations = getGameDataByValues(context, "locations", "0.0.0", "")
+
+        var locationsStringArray : List<String> = locations.title.toString().split(",").map { it.trim() }
+        locationsStringArray.forEach {
+            if(!it.isEmpty()) {
+                locationsArray.add(it)
+            }
+        }
+        return locationsArray.toList()
+    }
+
+    fun setGamesLocation(context : Context?, path: String) {
+        var exist : Boolean = false
+        var locations = getGameDataByValues(context, "locations", "0.0.0", "")
+
+        var locationsStringArray : List<String> = locations.title.toString().split(",").map { it.trim() }
+        for(dirPath in locationsStringArray) {
+            if(dirPath == path) {
+                exist = true
+            }
+        }
+
+        if(!exist){
+            locations.title = locations.title + (if(locations.title?.isEmpty() == true) "" else ",") + path
+        }
+        saveGameData(context, locations)
+    }
+
+    fun deleteGameLocation(context : Context?, path: String) {
+        var newPaths : String = ""
+        var locations = getGameDataByValues(context, "locations", "0.0.0", "")
+
+        var locationsStringArray : List<String> = locations.title.toString().split(",").map { it.trim() }
+        for(dirPath in locationsStringArray) {
+            if(dirPath.isNotEmpty() && dirPath != path) {
+                newPaths += (if (newPaths.isEmpty()) "" else ",") + dirPath
+            }
+        }
+        locations.title = newPaths
+        saveGameData(context, locations)
+    }
+
     @Serializable
     class CustomGameData ( var titleId: String?, var version: String?, var title: String?) {
         // General Values

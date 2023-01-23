@@ -16,6 +16,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import emu.skyline.databinding.SettingsActivityBinding
 import emu.skyline.preference.IntegerListPreference
+import emu.skyline.utils.GameDataHandler
 import emu.skyline.utils.GpuDriverHelper
 import emu.skyline.utils.WindowInsetsHelper
 import emu.skyline.utils.sharedPreferences
@@ -122,6 +123,23 @@ class SettingsActivity : AppCompatActivity() {
                     title = it
                 })
             }
+
+            setDirectoriesSummary()
+        }
+
+        fun setDirectoriesSummary() {
+            var gameDataHandler = GameDataHandler()
+            var locations = gameDataHandler.getGamesLocations(context)
+            findPreference<Preference>("games_locations")?.summary =
+                if(locations.isEmpty())
+                    context!!.getString(R.string.no_location_summary)
+                else
+                    locations.size.toString() + " " + context!!.getString(
+                        if(locations.size == 1)
+                            R.string.location_summary_single
+                        else
+                            R.string.location_summary_multiple
+                    )
         }
 
         override fun onDisplayPreferenceDialog(preference : Preference) {
@@ -137,6 +155,11 @@ class SettingsActivity : AppCompatActivity() {
             } else {
                 super.onDisplayPreferenceDialog(preference)
             }
+        }
+
+        override fun onResume() {
+            setDirectoriesSummary()
+            super.onResume()
         }
     }
 

@@ -17,6 +17,7 @@ import java.io.File
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
+import kotlin.collections.List
 
 sealed class MainState {
     object Loading : MainState()
@@ -41,7 +42,7 @@ class MainViewModel @Inject constructor(@ApplicationContext context : Context, p
      *
      * @param loadFromFile If this is false then trying to load cached adapter data is skipped entirely
      */
-    fun loadRoms(context : Context, loadFromFile : Boolean, searchLocation : Uri, systemLanguage : Int) {
+    fun loadRoms(context : Context, loadFromFile : Boolean, searchLocations : List<String>, systemLanguage : Int) {
         if (state == MainState.Loading) return
         state = MainState.Loading
 
@@ -57,20 +58,40 @@ class MainViewModel @Inject constructor(@ApplicationContext context : Context, p
                 }
             }
 
-            state = if (searchLocation.toString().isEmpty()) {
+            state = if (searchLocations.isEmpty()) {
                 @Suppress("ReplaceWithEnumMap")
                 MainState.Loaded(HashMap())
             } else {
                 try {
-                    KeyReader.importFromLocation(context, searchLocation)
-                    val romElements = romProvider.loadRoms(searchLocation, systemLanguage)
-                    romElements.toFile(romsFile)
-                    MainState.Loaded(romElements)
+                    var romElements = mutableMapOf<RomFormat, ArrayList<AppEntry>>()
+                    for (location in searchLocations) {
+                        KeyReader.importFromLocation(context, Uri.parse(location))
+                        val roms = romProvider.loadRoms(Uri.parse(location), systemLanguage)
+                        romElements = mergeDirectories(romElements, roms)
+                    }
+                    HashMap(romElements).toFile(romsFile)
+                    MainState.Loaded(HashMap(romElements))
                 } catch (e : Exception) {
                     Log.w(TAG, "Ran into exception while saving: ${e.message}")
                     MainState.Error(e)
                 }
             }
         }
+    }
+
+    fun mergeDirectories(
+        first: kotlin.collections.MutableMap<RomFormat, ArrayList<AppEntry>>,
+        second: kotlin.collections.HashMap<RomFormat, ArrayList<AppEntry>>,
+    ) : MutableMap<RomFormat, ArrayList<AppEntry>> {
+        for ((key, value) in second) {
+            Log.i("value","$key = $value")
+            if(!first.containsKey(key)){
+                first[key] = ArrayList<AppEntry>()
+            }
+            for(app in value){
+                first[key]?.add(app)
+            }
+        }
+        return first
     }
 }

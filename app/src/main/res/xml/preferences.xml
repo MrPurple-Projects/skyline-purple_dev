@@ -3,8 +3,13 @@
     <PreferenceCategory
         android:key="category_emulator"
         android:title="@string/emulator">
+        <emu.skyline.preference.GameLocationsPreference
+            app:key="games_locations"
+            app:title="@string/search_location"
+            app:summary="@string/no_location_summary" />
         <emu.skyline.preference.FolderPickerPreference
             app:key="search_location"
+            app:isPreferenceVisible="false"
             app:title="@string/search_location" />
         <emu.skyline.preference.DocumentsProviderPreference
             app:key="document_provider"
@@ -95,7 +100,7 @@
             app:key="profile_picture_value"
             app:title="@string/profile_picture" />
         <emu.skyline.preference.IntegerListPreference
-            android:defaultValue="1"
+            android:defaultValue="14"
             android:entries="@array/system_languages"
             android:entryValues="@array/system_languages_val"
             app:key="system_language"
@@ -103,7 +108,7 @@
             app:title="@string/system_language"
             app:useSimpleSummaryProvider="true" />
         <emu.skyline.preference.IntegerListPreference
-            android:defaultValue="-1"
+            android:defaultValue="1"
             android:entries="@array/system_region"
             android:entryValues="@array/system_region_val"
             app:key="system_region"

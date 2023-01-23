@@ -22,25 +22,30 @@ import emu.skyline.R as SkylineR
  */
 class GamepGpuDriverPreference @JvmOverloads constructor(context : Context, attrs : AttributeSet? = null, defStyleAttr : Int = R.attr.preferenceStyle) : Preference(context, attrs, defStyleAttr) {
     private val driverCallback = (context as ComponentActivity).registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        setSummaryProvider()
         notifyChanged()
     }
 
     init {
         val supportsCustomDriverLoading = GpuDriverHelper.supportsCustomDriverLoading()
         if (supportsCustomDriverLoading) {
-            summaryProvider = SummaryProvider<GamepGpuDriverPreference> {
-                sharedPreferences?.getString(key, PreferenceSettings.SYSTEM_GPU_DRIVER)?.let {
-                    var driver = it
-                    if (it == PreferenceSettings.SYSTEM_GPU_DRIVER)
-                        driver = context.getString(SkylineR.string.system_driver)
-
-                    context.getString(SkylineR.string.gpu_driver_config_desc, driver)
-                }
-            }
+            setSummaryProvider()
         } else {
             isEnabled = false
             summaryProvider = SummaryProvider<GamepGpuDriverPreference> {
                 context.getString(SkylineR.string.gpu_driver_config_desc_unsupported)
+            }
+        }
+    }
+
+    fun setSummaryProvider() {
+        summaryProvider = SummaryProvider<GamepGpuDriverPreference> {
+            sharedPreferences?.getString(key, PreferenceSettings.SYSTEM_GPU_DRIVER)?.let {
+                var driver = it
+                if (it == PreferenceSettings.SYSTEM_GPU_DRIVER)
+                    driver = context.getString(SkylineR.string.system_driver)
+
+                context.getString(SkylineR.string.gpu_driver_config_desc, driver)
             }
         }
     }

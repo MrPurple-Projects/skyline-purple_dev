@@ -60,6 +60,12 @@
         </activity>
 
         <activity
+            android:name=".preference.GameLocationsActivity"
+            android:exported="true"
+            android:parentActivityName=".SettingsActivity">
+        </activity>
+
+        <activity
             android:name=".preference.GpuDriverActivity"
             android:exported="true"
             android:parentActivityName=".SettingsActivity">
