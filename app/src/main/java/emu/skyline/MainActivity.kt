@@ -67,6 +67,11 @@ class MainActivity : AppCompatActivity() {
     private var formatFilter : RomFormat? = null
     private var appEntries : Map<RomFormat, List<AppEntry>>? = null
 
+    enum class SortingOrder {
+        AlphabeticalAsc,
+        AlphabeticalDesc
+    }
+
     private var refreshIconVisible = false
         set(visible) {
             field = visible
@@ -273,12 +278,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun sortGameList(gameList : List<AppEntry>) : MutableList<AppEntry> {
+    private fun sortGameList(gameList : List<AppEntry>) : List<AppEntry> {
         val sortedApps : MutableList<AppEntry> = mutableListOf<AppEntry>()
         gameList.forEach { entry -> sortedApps.add(entry) }
         when (preferenceSettings.sortAppsBy) {
-            1 -> sortedApps.sortByDescending { it.name }
-            else -> sortedApps.sortBy { it.name }
+            SortingOrder.AlphabeticalAsc.ordinal -> sortedApps.sortBy { it.name }
+            SortingOrder.AlphabeticalDesc.ordinal -> sortedApps.sortByDescending { it.name }
         }
         return sortedApps
     }

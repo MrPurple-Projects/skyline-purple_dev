@@ -13,6 +13,7 @@ namespace skyline::service::socket {
     }
 
     Result IClient::StartMonitoring(type::KSession &session, ipc::IpcRequest &request, ipc::IpcResponse &response) {
+        // Ryujinx does this
         u64 unknown{request.Pop<u64>()};
         Logger::Warn("Unknown: {}", unknown);
         return {};
@@ -82,6 +83,21 @@ namespace skyline::service::socket {
     }
 
     Result IClient::Accept(type::KSession &session, ipc::IpcRequest &request, ipc::IpcResponse &response) {
+        // TODO : Check if it is correct by debugging
+        int socketFd{request.Pop<int>()};
+
+        struct sockaddr_in copy;
+        bzero(&copy, sizeof(copy));
+        socklen_t len = sizeof(copy);
+        int newSocketFd = ::accept(socketFd, (struct sockaddr*)&copy, &len);
+
+        sockaddrs[newSocketFd] = copy;
+
+        Logger::Warn("Copy sin_family {} sin_port {}  sin_addr {}", copy.sin_family, copy.sin_port, copy.sin_addr.s_addr);
+        response.Push<u32>(0); //result
+        Logger::Warn("SocketFd {} NewSocketFd {} errno {}", socketFd, newSocketFd, errno); // If result is 0, do not care about errno
+        response.Push<u32>(errno);  // Error code
+        response.Push<sockaddr_in>(copy);
         return {};
     }
 
@@ -132,7 +148,7 @@ namespace skyline::service::socket {
     }
 
     Result IClient::GetSockName(type::KSession &session, ipc::IpcRequest &request, ipc::IpcResponse &response) {
-        // TODO : FIX
+        // TODO : FIX //Fixed I thing
         int socketFd{request.Pop<int>()};
 
         struct sockaddr_in copy;
@@ -140,7 +156,7 @@ namespace skyline::service::socket {
         socklen_t len = sizeof(copy);
         int result = ::getsockname(socketFd, (struct sockaddr*)&copy, &len);
 
-        //request.outputBuf.at(0).copy_from(span<sockaddr_in>(&copy, 1));
+        request.outputBuf.at(0).copy_from(span<sockaddr_in>(&copy, 1));
 
         sockaddrs[socketFd] = copy;
 
@@ -164,15 +180,34 @@ namespace skyline::service::socket {
         return {};
     }
 
+    Result IClient::Fcntl(type::KSession &session, ipc::IpcRequest &request, ipc::IpcResponse &response) {
+        // https://www.ibm.com/docs/en/zvse/6.2?topic=SSB27H_6.2.0/fa2ti_call_fcntl.htm
+        int socketFd{request.Pop<int>()};
+        int cmd{request.Pop<int>()};
+        int arg{request.Pop<int>()};
+
+        int result = ::fcntl(socketFd, cmd, arg);
+
+        response.Push<u32>(0); //result
+        Logger::Warn("SocketFd {} Cmd {} Arg {}", socketFd, cmd, arg); // If result is 0, do not care about errno
+        response.Push<u32>(errno);
+        return {};
+    }
+
     Result IClient::SetSockOpt(type::KSession &session, ipc::IpcRequest &request, ipc::IpcResponse &response) {
         //https://www.ibm.com/docs/en/zos/2.3.0?topic=functions-setsockopt-set-options-associated-socket
         int socketFd{request.Pop<int>()};
-        u32 level{request.Pop<u32>()};  // https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.socketoptionlevel?view=net-6.0   //Minecraft -> 65535  but for some reason returns errno 92
+        u32 level{request.Pop<u32>()};  // https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.socketoptionlevel?view=net-6.0   //Minecraft -> 65535 (SOL_SOCKET)  but for some reason returns errno 92
         u32 option_name{request.Pop<u32>()};
+
+        if (level == 0xffff)
+            level = SOL_SOCKET;
+        if (option_name == 0x4)
+            option_name = SO_REUSEADDR;
 
         Logger::Warn("socketFd {} level {} option_name 0x{:x} option_len {}", socketFd, level, option_name, request.inputBuf.at(0).size());
 
-        int result = ::setsockopt(socketFd, 6, option_name, request.inputBuf.at(0).data(), request.inputBuf.at(0).size());
+        int result = ::setsockopt(socketFd, SOL_SOCKET, option_name, request.inputBuf.at(0).data(), request.inputBuf.at(0).size());
 
         response.Push<u32>(0); //result
         Logger::Warn("SocketFd {} Result {} errno {}", socketFd, result, errno); // If result is 0, do not care about errno
@@ -200,7 +235,8 @@ namespace skyline::service::socket {
 
     Result IClient::Close(type::KSession &session, ipc::IpcRequest &request, ipc::IpcResponse &response) {
         int socketFd{request.Pop<int>()};
-        ::close(socketFd);
+        int result = ::close(socketFd);
+        Logger::Warn("Closed SocketFd {} Result {} errno {}", socketFd, result, errno);
         return {};
     }
 }
