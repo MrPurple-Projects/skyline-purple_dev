@@ -263,17 +263,6 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
         nativeSettings = NativeSettings(this, emulationSettings)
         setContentView(binding.root)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Android might not allow child views to overlap the system bars
-            // Override this behavior and force content to extend into the cutout area
-            window.setDecorFitsSystemWindows(false)
-
-            window.insetsController?.let {
-                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                it.hide(WindowInsets.Type.systemBars())
-            }
-        }
-
         if (emulationSettings.respectDisplayCutout) {
             binding.perfStats.setOnApplyWindowInsetsListener(insetsOrMarginHandler)
             binding.onScreenControllerToggle.setOnApplyWindowInsetsListener(insetsOrMarginHandler)
@@ -392,6 +381,17 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
 
         resumeEmulator()
 
+        // Android might not allow child views to overlap the system bars
+        // Override this behavior and force content to extend into the cutout area
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+        }
+
+        changeAudioStatus(true)
+    }
 
     private fun getPictureInPictureBuilder() : PictureInPictureParams.Builder {
         val pictureInPictureParamsBuilder = PictureInPictureParams.Builder()
