@@ -94,6 +94,20 @@
         <item>0</item>
         <item>8</item>
     </integer-array>
+    <string-array name="fps_size_entries">
+        <item>5dp</item>
+        <item>10dp</item>
+        <item>20dp</item>
+        <item>100dp</item>
+        <item>350dp</item>
+    </string-array>
+    <array name="fps_size_values">
+   	<item>5dp</item>
+    	<item>10dp</item>
+    	<item>20dp</item>
+    	<item>100dp</item>
+    	<item>350dp</item>
+    </array>
     <string-array name="credits_entries">
         <item>xnoro</item>
         <item>Zpsico</item>

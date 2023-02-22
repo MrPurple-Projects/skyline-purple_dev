@@ -196,6 +196,13 @@
             android:summary="@string/free_guest_texture_memory_desc"
             app:key="free_guest_texture_memory"
             app:title="@string/free_guest_texture_memory" />
+        <emu.skyline.preference.IntegerListPreference
+	    android:defaultValue="5"
+	    android:entries="@array/fps_size_entries"
+            android:entryValues="@array/fps_size_values"
+	    app:key="fps_size"
+	    app:title="@string/fps_size"
+	    app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="category_hacks"
