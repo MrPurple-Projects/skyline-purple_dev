@@ -29,6 +29,7 @@
         android:layout_marginTop="5dp"
         android:autoSizeTextType="uniform"
         app:autoSizePresetSizes="@array/fps_size_values"
+        android:autoSizeStepGranularity="5dp"
         tools:text="60 FPS\n16.6±0.10ms"
         android:textColor="@color/colorPerfStatsPrimary" />
 
