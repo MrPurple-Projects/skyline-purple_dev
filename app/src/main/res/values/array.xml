@@ -95,18 +95,18 @@
         <item>8</item>
     </integer-array>
     <string-array name="fps_size_entries">
-        <item>5dp</item>
-        <item>10dp</item>
-        <item>20dp</item>
-        <item>100dp</item>
-        <item>350dp</item>
+        <item>5sp</item>
+        <item>10sp</item>
+        <item>20sp</item>
+        <item>100sp</item>
+        <item>350sp</item>
     </string-array>
     <array name="fps_size_values">
-   	<item>5dp</item>
-    	<item>10dp</item>
-    	<item>20dp</item>
-    	<item>100dp</item>
-    	<item>350dp</item>
+   	<item>5sp</item>
+    	<item>10sp</item>
+    	<item>20sp</item>
+    	<item>100sp</item>
+    	<item>350sp</item>
     </array>
     <string-array name="credits_entries">
         <item>xnoro</item>
