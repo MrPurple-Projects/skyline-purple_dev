@@ -1,5 +1,4 @@
 # Building Guide
-
 ### Software needed
 * [Git](https://git-scm.com/download)
 * [Android Studio](https://developer.android.com/studio) – We recommend to get the latest stable version
