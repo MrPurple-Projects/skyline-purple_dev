@@ -18,7 +18,9 @@ import android.view.*
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
-import androidx.core.view.*
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
+import androidx.core.view.updateMargins
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,6 +85,8 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
 
     @Inject
     lateinit var appSettings : AppSettings
+
+    lateinit var nativeSettings : NativeSettings
 
     lateinit var emulationSettings : EmulationSettings
 
