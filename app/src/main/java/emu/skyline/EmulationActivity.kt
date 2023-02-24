@@ -86,9 +86,9 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
     @Inject
     lateinit var appSettings : AppSettings
 
-    lateinit var nativeSettings : NativeSettings
-
     lateinit var emulationSettings : EmulationSettings
+
+    lateinit var nativeSettings : NativeSettings
 
     @Inject
     lateinit var inputManager : InputManager
@@ -185,7 +185,6 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
     /**
      * @note Any caller has to handle the application potentially being restarted with the supplied intent
      */
-    @SuppressLint("Recycle")
     private fun executeApplication(intent : Intent) {
         if (emulationThread?.isAlive == true) {
             shouldFinish = false
@@ -210,7 +209,7 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
 
         GpuDriverHelper.ensureFileRedirectDir(this)
         emulationThread = Thread {
-        executeApplication(rom.toString(), romType, romFd.detachFd(), nativeSettings, applicationContext.getPublicFilesDir().canonicalPath + "/", applicationContext.filesDir.canonicalPath + "/", applicationInfo.nativeLibraryDir + "/", assets)
+            executeApplication(rom.toString(), romType, romFd.detachFd(), nativeSettings, applicationContext.getPublicFilesDir().canonicalPath + "/", applicationContext.filesDir.canonicalPath + "/", applicationInfo.nativeLibraryDir + "/", assets)
             returnFromEmulation()
         }
 
@@ -342,18 +341,6 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
     override fun onResume() {
         super.onResume()
 
-        if (preferenceSettings.forceMaxGpuClocks)
-            GpuDriverHelper.forceMaxGpuClocks(true)
-
-        // Android might not allow child views to overlap the system bars
-        // Override this behavior and force content to extend into the cutout area
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
-            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            controller.hide(WindowInsetsCompat.Type.systemBars())
-        }
-
         changeAudioStatus(true)
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
@@ -364,7 +351,7 @@ class EmulationActivity : AppCompatActivity(), SurfaceHolder.Callback, View.OnTo
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_FULLSCREEN)
-       }
+        }
     }
 
     /**
