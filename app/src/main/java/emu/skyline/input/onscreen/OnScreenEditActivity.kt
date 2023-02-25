@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import emu.skyline.R
 import emu.skyline.databinding.OnScreenEditActivityBinding
-import emu.skyline.utils.PreferenceSettings
+import emu.skyline.settings.AppSettings
 import petrov.kristiyan.colorpicker.ColorPicker
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -32,7 +32,7 @@ class OnScreenEditActivity : AppCompatActivity() {
     private var editMode = false
 
     @Inject
-    lateinit var preferenceSettings : PreferenceSettings
+    lateinit var appSettings : AppSettings
 
     private val closeAction : () -> Unit = {
         if (editMode) {
@@ -178,7 +178,7 @@ class OnScreenEditActivity : AppCompatActivity() {
             }
         }
 
-        binding.onScreenControllerView.recenterSticks = preferenceSettings.onScreenControlRecenterSticks
+        binding.onScreenControllerView.recenterSticks = appSettings.onScreenControlRecenterSticks
 
         actions.forEach { pair ->
             binding.fabParent.addView(LayoutInflater.from(this).inflate(R.layout.on_screen_edit_mini_fab, binding.fabParent, false).apply {
